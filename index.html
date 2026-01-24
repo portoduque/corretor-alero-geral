@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correção de Prova - Analista Legislativo (Geral)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #2c3e50; --primary-dark: #1a252f; --accent: #e74c3c;
+            --accent-light: #ff6b6b; --success: #27ae60; --warning: #f39c12;
+            --bg-main: #ecf0f1; --bg-card: #ffffff; --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d; --border: #bdc3c7; --shadow: rgba(44, 62, 80, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg-main); color: var(--text-primary); min-height: 100vh; padding: 40px 20px; position: relative; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 320px; background: linear-gradient(165deg, var(--primary) 0%, var(--primary-dark) 100%); z-index: 0; }
+        .container { max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; }
+        .header { background: var(--bg-card); padding: 50px 60px; border-radius: 16px; box-shadow: 0 8px 32px var(--shadow); margin-bottom: 32px; border-left: 6px solid var(--accent); }
+        h1 { font-family: 'Crimson Pro', serif; font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; letter-spacing: -0.5px; }
+        .subtitle { font-size: 16px; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.3px; }
+        .actions-container { background: var(--bg-card); padding: 28px 40px; border-radius: 16px; box-shadow: 0 4px 16px var(--shadow); margin-bottom: 32px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+        .btn { padding: 14px 24px; border: 2px solid transparent; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; font-family: 'DM Sans', sans-serif; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--shadow); }
+        .btn-import-gab { background: var(--primary); color: white; }
+        .btn-import-resp { background: var(--accent); color: white; }
+        .btn-export { background: transparent; color: var(--text-primary); border-color: var(--border); }
+        .btn-limpar-resp { background: var(--warning); color: white; }
+        .btn-limpar { background: transparent; color: var(--text-primary); border-color: var(--border); }
+        .card-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-card); padding: 32px; border-radius: 16px; box-shadow: 0 4px 16px var(--shadow); position: relative; overflow: hidden; transition: transform 0.3s ease; }
+        .stat-card:hover { transform: translateY(-4px); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent); }
+        .stat-label { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 12px; }
+        .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 48px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 8px; }
+        .stat-meta { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+        .section { background: var(--bg-card); padding: 40px; border-radius: 16px; box-shadow: 0 4px 16px var(--shadow); margin-bottom: 32px; }
+        .section-title { font-family: 'Crimson Pro', serif; font-size: 28px; font-weight: 700; color: var(--primary); margin-bottom: 28px; display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 2px solid var(--bg-main); }
+        .scroll-container { border: 2px solid var(--bg-main); border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        thead { position: sticky; top: 0; z-index: 10; }
+        th { background: var(--primary); color: white; padding: 18px 16px; text-align: center; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px; }
+        td { padding: 16px; text-align: center; border-bottom: 1px solid var(--bg-main); transition: background 0.2s ease; }
+        tr:hover td { background: #f8f9fa; }
+        tr.row-anulada td { background: #fff3cd !important; }
+        select { width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; background: white; cursor: pointer; transition: all 0.2s ease; }
+        select:hover { border-color: var(--primary); }
+        select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1); }
+        .disciplina-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }
+        .badge-portugues { background: #dfe6e9; color: #2d3436; }
+        .badge-raciocinio { background: #ffeaa7; color: #6c5ce7; }
+        .badge-info { background: #dff9fb; color: #0097e6; }
+        .badge-legislacao { background: #81ecec; color: #00b894; }
+        .badge-historia { background: #fab1a0; color: #e17055; }
+        .badge-especificos { background: #a29bfe; color: #6c5ce7; }
+        .peso-badge { background: var(--primary); color: white; padding: 6px 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; }
+        .certo, .errado, .anulada { color: white; padding: 8px 16px; border-radius: 8px; font-weight: 600; display: inline-block; }
+        .certo { background: var(--success); }
+        .errado { background: var(--accent); }
+        .anulada { background: var(--warning); }
+        .painel th { background: var(--primary-dark); }
+        .subtotal { background: #fff9e6 !important; font-weight: 600; }
+        .total { background: var(--primary) !important; color: white; font-weight: 700; font-size: 16px; }
+        .validacao-sim, .validacao-nao { color: white; padding: 6px 14px; border-radius: 6px; font-weight: 600; display: inline-block; }
+        .validacao-sim { background: var(--success); }
+        .validacao-nao { background: var(--accent); }
+        .status-box { margin-top: 32px; padding: 48px; text-align: center; border-radius: 16px; font-family: 'Crimson Pro', serif; font-size: 36px; font-weight: 700; box-shadow: 0 8px 32px var(--shadow); animation: slideUp 0.5s ease; }
+        .aprovado { background: linear-gradient(135deg, #27ae60 0%, #229954 100%); color: white; border: 4px solid #1e8449; }
+        .eliminado { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: 4px solid #a93226; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Correção de Prova</h1>
+            <div class="subtitle">Concurso Público • Analista Legislativo - Demais Especialidades</div>
+        </div>
+        
+        <div class="actions-container">
+            <input type="file" id="uploadGabarito" accept=".json,.csv,.txt" style="display: none;" onchange="processarArquivo(event, 'gab')">
+            <input type="file" id="uploadRespostas" accept=".json,.csv,.txt" style="display: none;" onchange="processarArquivo(event, 'resp')">
+            <button class="btn btn-import-gab" onclick="document.getElementById('uploadGabarito').click()">📤 Importar Gabarito</button>
+            <button class="btn btn-import-resp" onclick="document.getElementById('uploadRespostas').click()">📥 Importar Respostas</button>
+            <button class="btn btn-export" onclick="exportarDados()">💾 Backup</button>
+            <button class="btn btn-limpar-resp" onclick="limparApenasRespostas()">🧹 Limpar Respostas</button>
+            <button class="btn btn-limpar" onclick="limparTudo()">🗑️ Reset Total</button>
+        </div>
+        
+        <div class="card-stats">
+            <div class="stat-card">
+                <div class="stat-label">Total de Acertos</div>
+                <div class="stat-value" id="statAcertos">0</div>
+                <div class="stat-meta">Mínimo necessário: 40</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pontuação Total</div>
+                <div class="stat-value" id="statPontos">0</div>
+                <div class="stat-meta">de 120 pontos possíveis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Questões Pendentes</div>
+                <div class="stat-value" id="statBranco" style="color: var(--warning);">80</div>
+                <div class="stat-meta">Sem resposta registrada</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title"><span>📝</span> Lista de Questões</div>
+            <div class="scroll-container">
+                <table id="questoes">
+                    <thead>
+                        <tr>
+                            <th>Nº</th><th>Disciplina</th><th>Peso</th><th>Gabarito</th>
+                            <th>Resposta</th><th>Resultado</th><th>Pontos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="questoesBody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section painel">
+            <div class="section-title"><span>📈</span> Painel de Desempenho</div>
+            <table id="desempenho">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Disciplina</th><th>Questões</th><th>Peso</th>
+                        <th>Acertos</th><th>Pontos</th><th>%</th><th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="desempenhoBody"></tbody>
+            </table>
+        </div>
+        
+        <div id="statusFinal" class="status-box"></div>
+    </div>
+
+    <script>
+        const disciplinas = [
+            {nome: "Língua Portuguesa", inicio: 1, fim: 14, peso: 1, classe: "badge-portugues"},
+            {nome: "Raciocínio Lógico", inicio: 15, fim: 19, peso: 1, classe: "badge-raciocinio"},
+            {nome: "Noções de Informática", inicio: 20, fim: 24, peso: 1, classe: "badge-info"},
+            {nome: "Legislação Específica", inicio: 25, fim: 32, peso: 1, classe: "badge-legislacao"},
+            {nome: "História e Geografia de RO", inicio: 33, fim: 40, peso: 1, classe: "badge-historia"},
+            {nome: "Conhecimentos Específicos", inicio: 41, fim: 80, peso: 2, classe: "badge-especificos"}
+        ];
+        
+        const questoesData = [];
+        
+        function salvarDados() {
+            const dados = { questoes: questoesData.map(q => ({ numero: q.numero, gabarito: q.gabarito, resposta: q.resposta })) };
+            localStorage.setItem('prova_alero_analista_geral', JSON.stringify(dados));
+        }
+        
+        function carregarDados() {
+            try {
+                const dados = localStorage.getItem('prova_alero_analista_geral');
+                return dados ? JSON.parse(dados).questoes : null;
+            } catch (e) { return null; }
+        }
+        
+        function limparTudo() {
+            if (confirm('⚠️ Tem certeza que deseja apagar TUDO (Gabarito e Respostas)?')) {
+                localStorage.removeItem('prova_alero_analista_geral');
+                location.reload();
+            }
+        }
+
+        function limparApenasRespostas() {
+            if (confirm('Deseja limpar apenas as suas respostas (manter o Gabarito Oficial)?')) {
+                questoesData.forEach(q => {
+                    q.resposta = "";
+                    document.getElementById(`resp${q.numero}`).value = "";
+                });
+                calcular();
+            }
+        }
+
+        function processarArquivo(event, tipo) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    let map = {};
+                    if (file.name.toLowerCase().endsWith('.json')) {
+                        const json = JSON.parse(content);
+                        if (!Array.isArray(json)) for (const [k, v] of Object.entries(json)) map[parseInt(k.replace(/\D/g, ''))] = v;
+                    } else {
+                        content.split(/\r\n|\n/).forEach((line, idx) => {
+                            const p = line.split(/,|;/);
+                            if (p.length >= 2) map[parseInt(p[0])] = p[1].trim().toUpperCase();
+                            else if (p[0].trim()) map[idx+1] = p[0].trim().toUpperCase();
+                        });
+                    }
+                    aplicarImportacao(map, tipo);
+                } catch (err) { alert("Erro ao ler arquivo."); }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function aplicarImportacao(dados, tipo) {
+            let count = 0;
+            for (const [k, v] of Object.entries(dados)) {
+                const el = document.getElementById(`${tipo}${k}`);
+                if (el && ["A","B","C","D","E","X"].includes(v)) { el.value = v; count++; }
+            }
+            calcular();
+            alert(`${count} registros importados.`);
+        }
+
+        function exportarDados() {
+            const exp = {};
+            questoesData.forEach(q => {
+                if(q.gabarito) exp[`gab_${q.numero}`] = q.gabarito;
+                if(q.resposta) exp[`resp_${q.numero}`] = q.resposta;
+            });
+            const a = document.createElement('a');
+            a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exp));
+            a.download = "backup_prova_analista_geral.json";
+            a.click();
+        }
+
+        function inicializarQuestoes() {
+            const tbody = document.getElementById('questoesBody');
+            const salvos = carregarDados() || [];
+            
+            for (let i = 1; i <= 80; i++) {
+                const disc = disciplinas.find(d => i >= d.inicio && i <= d.fim);
+                const salvo = salvos.find(q => q.numero === i) || {};
+                
+                questoesData.push({
+                    numero: i, disciplina: disc.nome, peso: disc.peso, classe: disc.classe,
+                    gabarito: salvo.gabarito || "", resposta: salvo.resposta || "", resultado: "", pontos: 0
+                });
+                
+                tbody.innerHTML += `
+                    <tr id="row${i}">
+                        <td style="font-weight:700; font-family: 'JetBrains Mono', monospace;">${i}</td>
+                        <td><span class="disciplina-badge ${disc.classe}">${disc.nome}</span></td>
+                        <td><span class="peso-badge">${disc.peso}</span></td>
+                        <td><select id="gab${i}" onchange="calcular()">${optionsHtml(salvo.gabarito, true)}</select></td>
+                        <td><select id="resp${i}" onchange="calcular()">${optionsHtml(salvo.resposta, false)}</select></td>
+                        <td id="result${i}">-</td>
+                        <td id="pontos${i}" style="font-weight:700; font-family: 'JetBrains Mono', monospace; color: var(--primary);">0</td>
+                    </tr>`;
+            }
+        }
+
+        function optionsHtml(selected, includeAnulada) {
+            let html = '<option value="">-</option>';
+            ['A','B','C','D','E'].forEach(opt => html += `<option value="${opt}" ${selected===opt?'selected':''}>${opt}</option>`);
+            if(includeAnulada) html += `<option value="X" ${selected==='X'?'selected':''}>✖ ANULADA</option>`;
+            return html;
+        }
+
+        function calcular() {
+            let emBranco = 0;
+            questoesData.forEach(q => {
+                q.gabarito = document.getElementById(`gab${q.numero}`).value;
+                q.resposta = document.getElementById(`resp${q.numero}`).value;
+                const row = document.getElementById(`row${q.numero}`);
+                const resCell = document.getElementById(`result${q.numero}`);
+                const ptsCell = document.getElementById(`pontos${q.numero}`);
+                
+                row.classList.remove('row-anulada');
+                if (!q.gabarito || !q.resposta) emBranco++;
+
+                if (q.gabarito === "X") {
+                    q.resultado = "ANULADA"; q.pontos = q.peso;
+                    resCell.innerHTML = "<span class='anulada'>⚠ ANULADA</span>";
+                    row.classList.add('row-anulada');
+                } else if (q.gabarito && q.resposta) {
+                    q.resultado = (q.gabarito === q.resposta) ? "CERTO" : "ERRADO";
+                    q.pontos = (q.resultado === "CERTO") ? q.peso : 0;
+                    resCell.innerHTML = `<span class='${q.resultado.toLowerCase()}'>${q.resultado === "CERTO" ? '✓' : '✗'} ${q.resultado}</span>`;
+                } else {
+                    q.resultado = ""; q.pontos = 0; resCell.innerText = "-";
+                }
+                ptsCell.innerText = q.pontos;
+            });
+            
+            document.getElementById('statBranco').innerText = emBranco;
+            salvarDados();
+            atualizarPainel();
+        }
+
+        function atualizarPainel() {
+            const tbody = document.getElementById('desempenhoBody');
+            tbody.innerHTML = "";
+            let mod1 = {q:0, acertos:0, pts:0, possivel:0}, mod2 = {q:0, acertos:0, pts:0, possivel:0};
+
+            disciplinas.forEach((disc, idx) => {
+                const stats = getStats(disc);
+                addRow(tbody, disc, stats);
+                if (disc.peso === 1) {
+                    addStats(mod1, stats);
+                } else {
+                    addStats(mod2, stats);
+                }
+            });
+            
+            const pass1 = mod1.acertos >= 16;
+            addSummaryRow(tbody, "📚 MÓDULO I - Básicos", mod1, pass1, 16);
+            
+            const pass2 = mod2.acertos >= 20;
+            addSummaryRow(tbody, "💻 MÓDULO II - Específicos", mod2, pass2, 20);
+
+            const total = { acertos: mod1.acertos + mod2.acertos, pts: mod1.pts + mod2.pts, possivel: mod1.possivel + mod2.possivel };
+            const passTotal = total.acertos >= 40;
+            
+            tbody.innerHTML += `
+                <tr class="total">
+                    <td style="text-align:left; padding-left:20px;">🎯 RESULTADO FINAL</td>
+                    <td>80</td><td>-</td><td>${total.acertos}</td><td>${total.pts}</td>
+                    <td>${total.possivel > 0 ? (total.pts/total.possivel*100).toFixed(1) : '0.0'}%</td><td>-</td>
+                </tr>`;
+
+            const box = document.getElementById('statusFinal');
+            if (pass1 && pass2 && passTotal) {
+                box.textContent = "🎉 APROVADO!"; box.className = "status-box aprovado";
+            } else {
+                let fails = [];
+                if(!pass1) fails.push("Módulo I"); if(!pass2) fails.push("Módulo II"); if(!passTotal) fails.push("Total Geral");
+                box.textContent = `😔 ELIMINADO • Falhou em: ${fails.join(", ")}`; box.className = "status-box eliminado";
+            }
+
+            document.getElementById('statAcertos').innerText = total.acertos;
+            document.getElementById('statPontos').innerText = total.pts;
+        }
+
+        function getStats(disc) {
+            const qs = questoesData.filter(q => q.numero >= disc.inicio && q.numero <= disc.fim);
+            const acertos = qs.filter(q => q.resultado === "CERTO" || q.resultado === "ANULADA").length;
+            const pts = qs.reduce((acc, cur) => acc + cur.pontos, 0);
+            return { q: qs.length, acertos, pts, possivel: qs.length * disc.peso, w: disc.peso };
+        }
+
+        function addStats(target, source) {
+            target.q += source.q; target.acertos += source.acertos; target.pts += source.pts; target.possivel += source.possivel;
+        }
+
+        function addRow(body, disc, s) {
+            const perc = s.possivel ? (s.pts / s.possivel * 100).toFixed(1) : '0.0';
+            body.innerHTML += `<tr>
+                <td style="text-align:left; padding-left:20px;"><span class="disciplina-badge ${disc.classe}">${disc.nome}</span></td>
+                <td>${s.q}</td><td><span class="peso-badge">${disc.peso}</span></td>
+                <td style="font-weight:700;">${s.acertos}</td>
+                <td style="font-weight:700; color: var(--success);">${s.pts}</td>
+                <td>${perc}%</td><td>-</td>
+            </tr>`;
+        }
+
+        function addSummaryRow(body, title, s, pass, min) {
+            const perc = s.possivel ? (s.pts / s.possivel * 100).toFixed(1) : '0.0';
+            body.innerHTML += `<tr class="subtotal">
+                <td style="text-align:left; padding-left:20px;">${title}</td>
+                <td>${s.q}</td><td>-</td><td style="font-weight:700;">${s.acertos}</td>
+                <td style="font-weight:700;">${s.pts}</td>
+                <td>${perc}%</td>
+                <td><span class="${pass ? 'validacao-sim' : 'validacao-nao'}">${pass ? `✓ OK (≥${min})` : `✗ FALHOU (<${min})`}</span></td>
+            </tr>`;
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarQuestoes();
+            calcular();
+            document.getElementById('uploadGabarito').addEventListener('change', (e) => processarArquivo(e, 'gab'));
+            document.getElementById('uploadRespostas').addEventListener('change', (e) => processarArquivo(e, 'resp'));
+        });
+    </script>
+</body>
+</html>        });
+    </script>
+</body>
+</html>
