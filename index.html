@@ -97,7 +97,7 @@
             <div class="stat-card">
                 <div class="stat-label">Pontuação Total</div>
                 <div class="stat-value" id="statPontos">0</div>
-                <div class="stat-meta">de 120 pontos possíveis</div>
+                <div class="stat-meta">de 124 pontos possíveis</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Questões Pendentes</div>
@@ -143,7 +143,7 @@
             {nome: "Raciocínio Lógico", inicio: 15, fim: 19, peso: 1, classe: "badge-raciocinio"},
             {nome: "Noções de Informática", inicio: 20, fim: 24, peso: 1, classe: "badge-info"},
             {nome: "Legislação Específica", inicio: 25, fim: 32, peso: 1, classe: "badge-legislacao"},
-            {nome: "História e Geografia de RO", inicio: 33, fim: 40, peso: 1, classe: "badge-historia"},
+            {nome: "História e Geografia de RO", inicio: 33, fim: 40, peso: 1.5, classe: "badge-historia"},
             {nome: "Conhecimentos Específicos", inicio: 41, fim: 80, peso: 2, classe: "badge-especificos"}
         ];
         
@@ -297,7 +297,8 @@
             disciplinas.forEach((disc, idx) => {
                 const stats = getStats(disc);
                 addRow(tbody, disc, stats);
-                if (disc.peso === 1) {
+                // Módulo I: questões 1-40 (Básicos), Módulo II: questões 41-80 (Específicos)
+                if (disc.fim <= 40) {
                     addStats(mod1, stats);
                 } else {
                     addStats(mod2, stats);
@@ -369,12 +370,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             inicializarQuestoes();
             calcular();
-            document.getElementById('uploadGabarito').addEventListener('change', (e) => processarArquivo(e, 'gab'));
-            document.getElementById('uploadRespostas').addEventListener('change', (e) => processarArquivo(e, 'resp'));
         });
-    </script>
-</body>
-</html>        });
     </script>
 </body>
 </html>
